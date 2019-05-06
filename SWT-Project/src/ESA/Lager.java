@@ -23,6 +23,7 @@ public class Lager implements Serializable
 		artListe = new LinkedList<>();
 		bestellung = new Bestellung();
 		artListe.add(new Artikel("Kamera", 25, 5));
+		artListe.add(new Artikel("Handy", 50, 10));
 	}
 
 	public Lager(LinkedList<Artikel> artListe) 

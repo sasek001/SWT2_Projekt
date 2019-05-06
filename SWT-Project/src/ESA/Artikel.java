@@ -1,5 +1,6 @@
 package ESA;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 
 public class Artikel implements Serializable
 {
@@ -7,7 +8,8 @@ public class Artikel implements Serializable
 
 
 	private String name;
-	
+
+	DecimalFormat f = new DecimalFormat("###,##0.00");
 
 	private double preis;
 	private int menge;
@@ -51,5 +53,10 @@ public class Artikel implements Serializable
 	public void setMenge(int menge) 
 	{
 		this.menge = menge;
+	}
+	
+	public String toString()
+	{
+		return menge + "x   " + name + "	" + (menge*preis);
 	}
 }

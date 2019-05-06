@@ -1,9 +1,13 @@
 package GUI;
 
 import java.io.File;
+import java.text.DecimalFormat;
 
 import ESA.Artikel;
+import ESA.Kunde;
 import ESA.Lager;
+import ESA.Rechnung;
+import ESA.Rechnungsverwaltung;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -28,6 +32,8 @@ import javafx.stage.Stage;
 public class Hauptfenster 
 {
 	Lager lager = new Lager();
+	Rechnungsverwaltung rv = new Rechnungsverwaltung();
+	DecimalFormat f = new DecimalFormat("###,##0.00");
 	
 	@SuppressWarnings("unchecked")
 //	@Override
@@ -154,7 +160,7 @@ public class Hauptfenster
 				alleArtikel.getItems().addAll(lager.getArtListe());
 				
 				bestellung.getItems().clear();
-				bestellung.getItems().addAll(lager.getBestellung().getBestellListe());
+				lager.getBestellung().getBestellListe().removeAll(lager.getBestellung().getBestellListe());
 			}
 		});
 		
@@ -168,72 +174,91 @@ public class Hauptfenster
 			}
 		});
 		
+		suchenButton.setOnAction(new EventHandler<ActionEvent>() 
+		{
+			@Override
+			public void handle(ActionEvent event) 
+			{
+				alleArtikel.getItems().clear();
+				if (!lager.getArtListe().isEmpty())
+					for(int i = 0; i<lager.getArtListe().size(); i++)
+						if(suchleiste.getText().equals(lager.getArtListe().get(i).getName()))
+						{
+							alleArtikel.getItems().add(lager.getArtListe().get(i));
+							alleArtikel.refresh();
+						}
+			}
+		});
+		
 		hinzufuegen.setOnAction(new EventHandler<ActionEvent>()
 		{
 			@Override
 			public void handle(ActionEvent event) 
 			{
-				lager.lagerZuBestellung(alleArtikel.getSelectionModel().getSelectedItem());
+				if(alleArtikel.getSelectionModel().getSelectedItem() != null)
+				{
+					lager.lagerZuBestellung(alleArtikel.getSelectionModel().getSelectedItem());
+					
+					alleArtikel.getItems().clear();
+					alleArtikel.getItems().addAll(lager.getArtListe());
+					
+					bestellung.getItems().clear();
+					bestellung.getItems().addAll(lager.getBestellung().getBestellListe());
+					
+					alleArtikel.refresh();
+					bestellung.refresh();
 				
-				alleArtikel.getItems().clear();
-				alleArtikel.getItems().addAll(lager.getArtListe());
-				
-				bestellung.getItems().clear();
-				bestellung.getItems().addAll(lager.getBestellung().getBestellListe());
-				
-				alleArtikel.refresh();
-				bestellung.refresh();
-				
-//				lager.getBestellung().hinzufuegen(alleArtikel.getSelectionModel().getSelectedItem());
-//				bestellung.getItems().clear();
-//				bestellung.getItems().addAll(lager.getBestellung().getBestellListe());
-//				
-//				if(lager.getArtListe().isEmpty())
-//					lager.getArtListe().addAll(alleArtikel.getItems());
-//				lager.entfernen(alleArtikel.getSelectionModel().getSelectedItem());
-////				alleArtikel.getItems().clear();
-//				alleArtikel.getItems().addAll(lager.getArtListe());
-//				
-//				alleArtikel.refresh();
-//				bestellung.refresh();
-				
-//			-------------------------------------------------	
-				
-				
-//				Artikel art = new Artikel(alleArtikel.getSelectionModel().getSelectedItem().getName(), alleArtikel.getSelectionModel().getSelectedItem().getPreis(), 1);
-//				int index = 0;
-//				boolean vorhanden = false;
-//				
-//				
-//				for (int i = 0; i<bestellung.getItems().size(); i++)
-//					if(bestellung.getItems().get(i).getName()==art.getName())
-//					{
-//						index = i;
-//						vorhanden = true;
-//					}
-//				
-//
-//				if (vorhanden)
-//				{
-//					bestellung.getItems().get(index).setMenge(bestellung.getItems().get(index).getMenge()+1);
-//					alleArtikel.getSelectionModel().getSelectedItem().setMenge(alleArtikel.getSelectionModel().getSelectedItem().getMenge()-1);
-//				}
-//				else
-//				{
-//					bestellung.getItems().add(art);
-//					alleArtikel.getSelectionModel().getSelectedItem().setMenge(alleArtikel.getSelectionModel().getSelectedItem().getMenge()-1);
-//				}
-//				
-//				if (alleArtikel.getItems().get(index).getMenge()==0)
-//					alleArtikel.getItems().remove(alleArtikel.getSelectionModel().getSelectedItem());
-//				
-//				bestellung.refresh();
-//				alleArtikel.refresh();
-				
-				double summe = 0;
-				for (int i = 0; i<bestellung.getItems().size(); i++)
-					summe += bestellung.getItems().get(i).getPreis() * bestellung.getItems().get(i).getMenge();
-				feldSumme.setText(summe + "€");
+	//				lager.getBestellung().hinzufuegen(alleArtikel.getSelectionModel().getSelectedItem());
+	//				bestellung.getItems().clear();
+	//				bestellung.getItems().addAll(lager.getBestellung().getBestellListe());
+	//				
+	//				if(lager.getArtListe().isEmpty())
+	//					lager.getArtListe().addAll(alleArtikel.getItems());
+	//				lager.entfernen(alleArtikel.getSelectionModel().getSelectedItem());
+	////				alleArtikel.getItems().clear();
+	//				alleArtikel.getItems().addAll(lager.getArtListe());
+	//				
+	//				alleArtikel.refresh();
+	//				bestellung.refresh();
+					
+	//			-------------------------------------------------	
+					
+					
+	//				Artikel art = new Artikel(alleArtikel.getSelectionModel().getSelectedItem().getName(), alleArtikel.getSelectionModel().getSelectedItem().getPreis(), 1);
+	//				int index = 0;
+	//				boolean vorhanden = false;
+	//				
+	//				
+	//				for (int i = 0; i<bestellung.getItems().size(); i++)
+	//					if(bestellung.getItems().get(i).getName()==art.getName())
+	//					{
+	//						index = i;
+	//						vorhanden = true;
+	//					}
+	//				
+	//
+	//				if (vorhanden)
+	//				{
+	//					bestellung.getItems().get(index).setMenge(bestellung.getItems().get(index).getMenge()+1);
+	//					alleArtikel.getSelectionModel().getSelectedItem().setMenge(alleArtikel.getSelectionModel().getSelectedItem().getMenge()-1);
+	//				}
+	//				else
+	//				{
+	//					bestellung.getItems().add(art);
+	//					alleArtikel.getSelectionModel().getSelectedItem().setMenge(alleArtikel.getSelectionModel().getSelectedItem().getMenge()-1);
+	//				}
+	//				
+	//				if (alleArtikel.getItems().get(index).getMenge()==0)
+	//					alleArtikel.getItems().remove(alleArtikel.getSelectionModel().getSelectedItem());
+	//				
+	//				bestellung.refresh();
+	//				alleArtikel.refresh();
+					
+					double summe = 0;
+					for (int i = 0; i<bestellung.getItems().size(); i++)
+						summe += bestellung.getItems().get(i).getPreis() * bestellung.getItems().get(i).getMenge();
+					feldSumme.setText(f.format(summe) + "€");
+				}
 			}
 		});
 		
@@ -242,64 +267,67 @@ public class Hauptfenster
 			@Override
 			public void handle(ActionEvent event) 
 			{
-				lager.bestellungZuLager(bestellung.getSelectionModel().getSelectedItem());
-				
-				alleArtikel.getItems().clear();
-				alleArtikel.getItems().addAll(lager.getArtListe());
-				
-				bestellung.getItems().clear();
-				bestellung.getItems().addAll(lager.getBestellung().getBestellListe());
-				
-				alleArtikel.refresh();
-				bestellung.refresh();
-				
-//				lager.hinzufuegen(bestellung.getSelectionModel().getSelectedItem());
-//				alleArtikel.getItems().clear();
-//				alleArtikel.getItems().addAll(lager.getArtListe());
-//				
-//				if (lager.getBestellung().getBestellListe().isEmpty())
-//					lager.getBestellung().getBestellListe().addAll(bestellung.getItems());
-//				lager.getBestellung().entfernen(bestellung.getSelectionModel().getSelectedItem());
-//				bestellung.getItems().clear();
-//				bestellung.getItems().addAll(lager.getBestellung().getBestellListe());
-//				
-//				alleArtikel.refresh();
-//				bestellung.refresh();
-				
-//				--------------------------
-				
-//				Artikel art = new Artikel(bestellung.getSelectionModel().getSelectedItem().getName(), bestellung.getSelectionModel().getSelectedItem().getPreis(), 1);
-//				int index = 0;
-//				boolean vorhanden = false;
-//				
-//				for (int i = 0; i<alleArtikel.getItems().size(); i++)
-//					if(alleArtikel.getItems().get(i).getName()==art.getName())
-//					{
-//						index = i;
-//						vorhanden = true;
-//					}
-//				
-//				if (vorhanden)
-//				{
-//					alleArtikel.getItems().get(index).setMenge(alleArtikel.getItems().get(index).getMenge()+1);
-//					bestellung.getSelectionModel().getSelectedItem().setMenge(bestellung.getSelectionModel().getSelectedItem().getMenge()-1);
-//				}
-//				else
-//				{
-//					alleArtikel.getItems().add(art);
-//					bestellung.getSelectionModel().getSelectedItem().setMenge(bestellung.getSelectionModel().getSelectedItem().getMenge()-1);
-//				}
-//				
-//				if (bestellung.getItems().get(index).getMenge()==0)
-//					bestellung.getItems().remove(bestellung.getSelectionModel().getSelectedItem());
-//				
-//				alleArtikel.refresh();
-//				bestellung.refresh();
-				
-				double summe = 0;
-				for (int i = 0; i<bestellung.getItems().size(); i++)
-					summe += bestellung.getItems().get(i).getPreis() * bestellung.getItems().get(i).getMenge();
-				feldSumme.setText(summe + "€");
+				if(bestellung.getSelectionModel().getSelectedItem() != null)
+				{
+					lager.bestellungZuLager(bestellung.getSelectionModel().getSelectedItem());
+					
+					alleArtikel.getItems().clear();
+					alleArtikel.getItems().addAll(lager.getArtListe());
+					
+					bestellung.getItems().clear();
+					bestellung.getItems().addAll(lager.getBestellung().getBestellListe());
+					
+					alleArtikel.refresh();
+					bestellung.refresh();
+					
+	//				lager.hinzufuegen(bestellung.getSelectionModel().getSelectedItem());
+	//				alleArtikel.getItems().clear();
+	//				alleArtikel.getItems().addAll(lager.getArtListe());
+	//				
+	//				if (lager.getBestellung().getBestellListe().isEmpty())
+	//					lager.getBestellung().getBestellListe().addAll(bestellung.getItems());
+	//				lager.getBestellung().entfernen(bestellung.getSelectionModel().getSelectedItem());
+	//				bestellung.getItems().clear();
+	//				bestellung.getItems().addAll(lager.getBestellung().getBestellListe());
+	//				
+	//				alleArtikel.refresh();
+	//				bestellung.refresh();
+					
+	//				--------------------------
+					
+	//				Artikel art = new Artikel(bestellung.getSelectionModel().getSelectedItem().getName(), bestellung.getSelectionModel().getSelectedItem().getPreis(), 1);
+	//				int index = 0;
+	//				boolean vorhanden = false;
+	//				
+	//				for (int i = 0; i<alleArtikel.getItems().size(); i++)
+	//					if(alleArtikel.getItems().get(i).getName()==art.getName())
+	//					{
+	//						index = i;
+	//						vorhanden = true;
+	//					}
+	//				
+	//				if (vorhanden)
+	//				{
+	//					alleArtikel.getItems().get(index).setMenge(alleArtikel.getItems().get(index).getMenge()+1);
+	//					bestellung.getSelectionModel().getSelectedItem().setMenge(bestellung.getSelectionModel().getSelectedItem().getMenge()-1);
+	//				}
+	//				else
+	//				{
+	//					alleArtikel.getItems().add(art);
+	//					bestellung.getSelectionModel().getSelectedItem().setMenge(bestellung.getSelectionModel().getSelectedItem().getMenge()-1);
+	//				}
+	//				
+	//				if (bestellung.getItems().get(index).getMenge()==0)
+	//					bestellung.getItems().remove(bestellung.getSelectionModel().getSelectedItem());
+	//				
+	//				alleArtikel.refresh();
+	//				bestellung.refresh();
+					
+					double summe = 0;
+					for (int i = 0; i<bestellung.getItems().size(); i++)
+						summe += bestellung.getItems().get(i).getPreis() * bestellung.getItems().get(i).getMenge();
+					feldSumme.setText(f.format(summe) + "€");
+				}
 			}
 		});
 
@@ -310,22 +338,11 @@ public class Hauptfenster
 				KundenFenster kf = new KundenFenster();
 				kf.showView();
 				lager.speichern(new File("Lagerbestand.txt"));
+				rv.getRechnungsliste().add(new Rechnung(new Kunde("Arben", "Kurtishi", "21.05.1998", "Hüttnerstraße", 47, 44145, "Dortmund"), lager.getBestellung(), feldSumme.getText()));
+				rv.speichern(new File("Rechnungsliste.txt"));
 				bestellung.getItems().clear();
 			}
 		});
-		
-		//LEFT
-//		Accordion a = new Accordion();
-//		a.
-//		Button a = new Button("asd");
-//		a.setMinWidth(70);
-//		Button d = new Button("ghjdk");
-//		d.setMinWidth(70);
-//		Button abmelden = new Button("Abmelden");
-//		abmelden.setMinWidth(70);
-//		VBox vButtons = new VBox(a, d, abmelden);
-//		
-//		bp.setLeft(vButtons);
 		
 		Stage s = new Stage();
 		Scene scene = new Scene(bp);

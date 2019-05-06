@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 public class Mitarbeiter implements Serializable
 {
+	private static int nr;
 	private static final long serialVersionUID = 1L;
 	
 	String vorname;
@@ -20,7 +21,7 @@ public class Mitarbeiter implements Serializable
 	{
 		this.vorname = vorname;
 		this.nachname = nachname;
-		this.id = (vorname.substring(0, 2) + nachname.substring(0,3)).toLowerCase();
+		this.id = "user" + nr++;
 		this.anmeldeDaten = new HashMap<>();
 		anmeldeDaten.put(id, pass);
 	}

@@ -62,10 +62,11 @@ public class Mitarbeiterverwaltung
 	
 	public boolean ueberpruefen(String id, Long pass)
 	{
-		for (int i = 0; i<mitarbeiterListe.size(); i++)
-			if (mitarbeiterListe.get(i).getAnmeldeDaten().containsKey(id))
-				if (mitarbeiterListe.get(i).getAnmeldeDaten().get(id).equals(pass))
-					return true;
+		if(!mitarbeiterListe.isEmpty())
+			for (int i = 0; i<mitarbeiterListe.size(); i++)
+				if (mitarbeiterListe.get(i).getAnmeldeDaten().containsKey(id))
+					if (mitarbeiterListe.get(i).getAnmeldeDaten().get(id).equals(pass))
+						return true;
 		return false;
 	}
 }

@@ -60,14 +60,14 @@ public class AnmeldeFenster extends Application
 			public void handle(ActionEvent event) 
 			{
 				mitarbeiterverwaltung = new Mitarbeiterverwaltung();
-				mitarbeiterverwaltung.getMitarbeiterListe().add(new Mitarbeiter("Arben", "Kurtishi", 123456L));
 
-				mitarbeiterverwaltung.speichern(new File ("MitarbeiterListe.txt"));
 				mitarbeiterverwaltung.laden(new File("MitarbeiterListe.txt"));
 				
+				boolean passt = false;
 				
-				boolean passt = mitarbeiterverwaltung.ueberpruefen(iDFeld.getText(), Long.parseLong(passFeld.getText()));
-				
+				if(!passFeld.getText().matches("[^0-9]+"))
+					passt = mitarbeiterverwaltung.ueberpruefen(iDFeld.getText(), Long.parseLong(passFeld.getText()));
+					
 				if (passt)
 				{
 					primaryStage.close();
