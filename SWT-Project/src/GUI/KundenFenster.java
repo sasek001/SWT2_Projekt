@@ -7,6 +7,9 @@ import javax.swing.JOptionPane;
 
 import ESA.Kunde;
 import ESA.Kundenverwaltung;
+import ESA.Lager;
+import ESA.Rechnung;
+import ESA.Rechnungsverwaltung;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -14,7 +17,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -23,13 +28,14 @@ import javafx.stage.Stage;
 public class KundenFenster 
 {
 	Kundenverwaltung kv = new Kundenverwaltung();
-	boolean ok;
+	Rechnungsverwaltung rv = new Rechnungsverwaltung();
+	ListView<Kunde> kListe = new ListView<Kunde>();
 
 	// @Override
 	// public void start(Stage primaryStage) throws Exception
-	public void showView() 
+	public void showView(Lager lager, String summe) 
 	{
-
+		
 		Label vorname = new Label("Vorname");
 		Label nachname = new Label("Nachname");
 		Label bday = new Label("Geburtstag");
@@ -124,10 +130,22 @@ public class KundenFenster
 						kv.laden(new File("Kundenliste.txt"));
 
 					boolean hinzugefuegt = kv.hinzufuegen(kunde);
+					
 					if (hinzugefuegt)
 					{
 						kv.speichern(new File("Kundenliste.txt"));
 						JOptionPane.showMessageDialog(null, "Kunde wurde hinzugefügt");
+						
+						lager.speichern(new File("Lagerbestand.txt"));
+						
+						if(new File("Rechnungsliste.txt").exists())
+							rv.laden(new File("Rechnungsliste.txt"));
+						
+						Rechnung rech = new Rechnung(kunde, lager.getBestellung(), summe, rv);
+						rv.getRechnungsliste().add(rech);
+						rv.speichern(new File("Rechnungsliste.txt"));
+						rech.ausgeben();
+						JOptionPane.showMessageDialog(null, "Rechnung wird erstellt");
 					} 
 					else
 						JOptionPane.showMessageDialog(null, "Dieser Kunde ist bereits abgespeichert");
@@ -142,8 +160,9 @@ public class KundenFenster
 			@Override
 			public void handle(ActionEvent event) 
 			{
-				AlleKundenFenster aKF = new AlleKundenFenster();
-				aKF.showView();
+				AlleKundenAuswahlFenster akaf = new AlleKundenAuswahlFenster();
+				akaf.showView(lager, kv, rv, summe);
+				s.close();
 			}
 		});
 	}

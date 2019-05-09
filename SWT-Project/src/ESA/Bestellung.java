@@ -1,9 +1,14 @@
 package ESA;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Bestellung 
+public class Bestellung implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private List<Artikel> bestellListe;
 
 	public Bestellung()
